@@ -23,40 +23,21 @@ class MyApp extends StatelessWidget {
 }
 
 // Hardcoded samples until the puzzle JSON schema exists.
-const _samples = <int, List<String>>{
-  13: <String>[
-    '.....#...#...',
-    '.........#...',
-    '.............',
-    '#...#.......#',
-    '......#...###',
-    '...#...###...',
-    '...#.....#...',
-    '...###...#...',
-    '###...#......',
-    '#.......#...#',
-    '.............',
-    '...#.........',
-    '...#...#.....',
-  ],
-  15: <String>[
-    '.....###....###',
-    '......##.......',
-    '...............',
-    '...#.....##....',
-    '#....#....#....',
-    '.......#......#',
-    '....#......#...',
-    '...#.......#...',
-    '...#......#....',
-    '#......#.......',
-    '....#....#....#',
-    '....##.....#...',
-    '...............',
-    '.......##......',
-    '###....###.....',
-  ],
-};
+const _sample = <String>[
+  '.....#...#...',
+  '.........#...',
+  '.............',
+  '#...#.......#',
+  '......#...###',
+  '...#...###...',
+  '...#.....#...',
+  '...###...#...',
+  '###...#......',
+  '#.......#...#',
+  '.............',
+  '...#.........',
+  '...#...#.....',
+];
 
 class GridPreviewPage extends StatefulWidget {
   const GridPreviewPage({super.key});
@@ -68,15 +49,6 @@ class GridPreviewPage extends StatefulWidget {
 class _GridPreviewPageState extends State<GridPreviewPage> {
   (int, int)? _selected;
   Axis _direction = Axis.horizontal;
-  int _size = 15;
-
-  void _onSizeChange(int size) {
-    setState(() {
-      _size = size;
-      _selected = null;
-      _direction = Axis.horizontal;
-    });
-  }
 
   void _onCellTap(int row, int col) {
     setState(() {
@@ -96,19 +68,10 @@ class _GridPreviewPageState extends State<GridPreviewPage> {
         child: Column(
           children: [
             CrosswordGrid(
-              rows: _samples[_size]!,
+              rows: _sample,
               selected: _selected,
               direction: _direction,
               onCellTap: _onCellTap,
-            ),
-            const SizedBox(height: 16),
-            SegmentedButton<int>(
-              segments: [
-                for (final size in _samples.keys)
-                  ButtonSegment(value: size, label: Text('$size×$size')),
-              ],
-              selected: {_size},
-              onSelectionChanged: (sizes) => _onSizeChange(sizes.first),
             ),
           ],
         ),

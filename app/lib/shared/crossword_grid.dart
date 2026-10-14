@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'crossword_cell.dart';
 
-const supportedCrosswordSizes = {13, 15};
+const supportedCrosswordSizes = {13};
 const _outerBorderWidth = 2.5;
 
 /// A square crossword grid. The size is the number of [rows], one of
