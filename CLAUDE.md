@@ -25,6 +25,7 @@ Run from the repo root.
 - `make sqlc`: generate Go code from `server/queries`
 - `make dev`: start Postgres and run the server under `air` on `:8080`
 - `make test-server` / `make test-app`: run Go or Flutter tests
+- `make perf-app`: trace grid taps in profile mode. Needs a USB-connected iPhone. Writes `app/build/grid_taps.timeline_summary.json`.
 
 Run `flutter` commands inside `app/`. Run `go` commands inside `server/`.
 

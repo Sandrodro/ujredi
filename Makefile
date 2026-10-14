@@ -5,7 +5,7 @@ AIR := $(GOBIN)/air
 
 DATABASE_URL ?= postgres://ujredi:ujredi@localhost:5432/ujredi?sslmode=disable
 
-.PHONY: tools db-up db-down migrate sqlc dev test-server test-app
+.PHONY: tools db-up db-down migrate sqlc dev test-server test-app perf-app
 
 tools:
 	go install github.com/pressly/goose/v3/cmd/goose@latest
@@ -32,3 +32,6 @@ test-server:
 
 test-app:
 	cd app && flutter test
+
+perf-app:
+	cd app && flutter drive --driver=test_driver/perf_driver.dart --target=integration_test/grid_perf_test.dart --profile --no-dds
