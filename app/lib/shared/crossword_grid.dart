@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'crossword_cell.dart';
 
-const crosswordSize = 14;
+const supportedCrosswordSizes = {13, 15};
 const _outerBorderWidth = 2.5;
 
-/// A square crossword grid. Each string in [rows] is one row of
-/// [crosswordSize] characters: `#` is a blocked cell, `.` is an empty cell,
-/// any other character is a letter.
+/// A square crossword grid. The size is the number of [rows], one of
+/// [supportedCrosswordSizes]. Each row is a string of that many characters:
+/// `#` is a blocked cell, `.` is an empty cell, any other character is a
+/// letter.
 ///
 /// The word of the [selected] cell, along [direction], is colored.
 class CrosswordGrid extends StatelessWidget {
@@ -18,9 +19,9 @@ class CrosswordGrid extends StatelessWidget {
     this.selected,
     this.direction = Axis.horizontal,
   }) : assert(
-         rows.length == crosswordSize &&
-             rows.every((row) => row.length == crosswordSize),
-         'The grid must be $crosswordSize x $crosswordSize',
+         supportedCrosswordSizes.contains(rows.length) &&
+             rows.every((row) => row.length == rows.length),
+         'The grid must be square, with a size in $supportedCrosswordSizes',
        );
 
   final List<String> rows;
@@ -28,11 +29,13 @@ class CrosswordGrid extends StatelessWidget {
   final Axis direction;
   final void Function(int row, int col) onCellTap;
 
+  int get _size => rows.length;
+
   bool _isWhite(int row, int col) =>
       row >= 0 &&
       col >= 0 &&
-      row < crosswordSize &&
-      col < crosswordSize &&
+      row < _size &&
+      col < _size &&
       rows[row][col] != '#';
 
   /// A white cell has a number if it starts an across or a down word.
@@ -73,11 +76,11 @@ class CrosswordGrid extends StatelessWidget {
         ),
         child: Column(
           children: [
-            for (var row = 0; row < crosswordSize; row++)
+            for (var row = 0; row < _size; row++)
               Expanded(
                 child: Row(
                   children: [
-                    for (var col = 0; col < crosswordSize; col++)
+                    for (var col = 0; col < _size; col++)
                       Expanded(
                         child: _buildCell(
                           row,

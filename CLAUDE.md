@@ -2,12 +2,9 @@
 
 Crossword app. The puzzle creator (`creator/`) sends puzzle JSON to the Go server. The server serves it to the Flutter app. Puzzles must be fully solvable offline, including revealing clues and answers.
 
-Design: `docs/superpowers/specs/2026-10-14-ujredi-monorepo-design.md`
-Plan: `docs/superpowers/plans/2026-10-14-ujredi-monorepo.md`
-
 ## Status
 
-Only the plumbing exists. The server serves `GET /healthz` and nothing else. The app is the default Flutter template. The creator is the Vite template with Tailwind and one placeholder page. The plan covers the rest: migration, JSON API, htmx admin pages, data layer, screens.
+Only the plumbing exists. The server serves `GET /healthz` and nothing else. The app is the default Flutter template. The creator is the Vite template with Tailwind and one placeholder page. Still to build: migration, JSON API, htmx admin pages, data layer, screens.
 
 ## Layout
 
