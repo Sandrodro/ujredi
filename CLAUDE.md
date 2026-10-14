@@ -1,18 +1,19 @@
 # Ujredi
 
-Crossword app. A separate puzzle-creator project (not in this repo) sends puzzle JSON to the Go server. The server serves it to the Flutter app. Puzzles must be fully solvable offline, including revealing clues and answers.
+Crossword app. The puzzle creator (`creator/`) sends puzzle JSON to the Go server. The server serves it to the Flutter app. Puzzles must be fully solvable offline, including revealing clues and answers.
 
 Design: `docs/superpowers/specs/2026-10-14-ujredi-monorepo-design.md`
 Plan: `docs/superpowers/plans/2026-10-14-ujredi-monorepo.md`
 
 ## Status
 
-Only the plumbing exists. The server serves `GET /healthz` and nothing else. The app is the default Flutter template. The plan covers the rest: migration, JSON API, htmx admin pages, data layer, screens.
+Only the plumbing exists. The server serves `GET /healthz` and nothing else. The app is the default Flutter template. The creator is the Vite template with Tailwind and one placeholder page. The plan covers the rest: migration, JSON API, htmx admin pages, data layer, screens.
 
 ## Layout
 
 - `app/`: Flutter, iOS and Android only. Package name is `ujredi`.
 - `server/`: Go module `ujredi/server`. Entry point is `cmd/server`. Folders `migrations/` (goose), `queries/` (sqlc input) and `internal/db/` (sqlc output) are empty.
+- `creator/`: React + TypeScript + Vite + Tailwind v4, managed with pnpm. Generates puzzles. Runs locally only, never deployed with the server.
 - `compose.yaml`: Postgres only. The Go server runs natively.
 
 ## Commands
@@ -26,14 +27,17 @@ Run from the repo root.
 - `make dev`: start Postgres and run the server under `air` on `:8080`
 - `make test-server` / `make test-app`: run Go or Flutter tests
 - `make perf-app`: trace grid taps in profile mode. Needs a USB-connected iPhone. Writes `app/build/grid_taps.timeline_summary.json`.
+- `make dev-creator` / `make build-creator`: run the creator dev server on `:5173` or build it
 
-Run `flutter` commands inside `app/`. Run `go` commands inside `server/`.
+Run `flutter` commands inside `app/`. Run `go` commands inside `server/`. Run `pnpm` commands inside `creator/`.
 
 ## Stack rules
 
 - Server: `net/http` with Go 1.22 method/path patterns (`"GET /api/puzzles/{id}"`). Database access through `pgx` + `sqlc` only. Migrations through goose only.
 - Server pages: `html/template` + htmx. Vendor htmx under `server/internal/web/static/`, do not load it from a CDN.
-- Puzzles are stored as `data jsonb`. The server checks only that an upload is a JSON object. The puzzle schema belongs to the creator project.
+- Puzzles are stored as `data jsonb`. The server checks only that an upload is a JSON object. The puzzle schema belongs to `creator/`.
+- Grid layouts, preset grids and grid rules (symmetry, black ratio, word length) belong to `creator/`. The app renders grids it receives. The server does not validate them.
+- The creator talks to the server only through the HTTP API, never to Postgres.
 - App state: Riverpod. Local progress: `shared_preferences`. Downloaded puzzles: JSON files in the app documents directory. Use drift (SQLite) only if history is needed.
 - Font: Noto Serif Georgian, bundled in `app/assets/fonts/`.
 - Put reusable widgets in `app/lib/shared/`.
