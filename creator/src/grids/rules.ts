@@ -1,16 +1,20 @@
 export const BLACK = '#'
 
-export const GRID_SIZE = 13
-
-export type Tier = 'standard' | 'loose'
+export type Tier = 'loose' | 'open' | 'loose-long' | 'open-long' | 'loose-14' | 'open-14'
 
 /**
- * Black-cell counts and the longest word per tier. `min` and `max` are the target
- * range for sample grids. Above `ceiling` a grid is invalid.
+ * Grid size, black-cell counts and the longest word per tier. `min` and `max` are
+ * the target range for sample grids. Above `ceiling` a grid is invalid.
  */
-export const TIERS: Record<Tier, { min: number; max: number; ceiling: number; maxWord: number }> = {
-  standard: { min: 28, max: 32, ceiling: 34, maxWord: 13 },
-  loose: { min: 36, max: 44, ceiling: 46, maxWord: 9 },
+export const TIERS: Record<Tier, { size: number; min: number; max: number; ceiling: number; maxWord: number }> = {
+  loose: { size: 13, min: 36, max: 44, ceiling: 46, maxWord: 9 },
+  open: { size: 13, min: 34, max: 35, ceiling: 36, maxWord: 9 },
+  'loose-long': { size: 13, min: 32, max: 34, ceiling: 36, maxWord: 11 },
+  'open-long': { size: 13, min: 28, max: 32, ceiling: 34, maxWord: 11 },
+  // Same settings as `loose` and `open`, with the black counts scaled by the cell
+  // count (196 / 169). A 14x14 grid has no centre cell, so its black counts are even.
+  'loose-14': { size: 14, min: 42, max: 51, ceiling: 53, maxWord: 9 },
+  'open-14': { size: 14, min: 39, max: 41, ceiling: 42, maxWord: 9 },
 }
 
 const MIN_WORD_LENGTH = 3
@@ -86,9 +90,9 @@ const isConnected = (rows: string[]) => {
 }
 
 /** Returns one message per broken rule. An empty list means the grid is valid. */
-export function checkGrid(rows: string[], tier: Tier = 'standard'): string[] {
+export function checkGrid(rows: string[], tier: Tier = 'loose'): string[] {
   const limits = TIERS[tier]
-  if (rows.length !== GRID_SIZE) return [`Unsupported size ${rows.length}, use ${GRID_SIZE}`]
+  if (rows.length !== limits.size) return [`Unsupported size ${rows.length}, use ${limits.size}`]
   if (rows.some((row) => row.length !== rows.length)) return ['Grid must be square']
 
   const errors: string[] = []

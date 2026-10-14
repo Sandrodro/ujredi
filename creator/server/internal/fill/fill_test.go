@@ -16,10 +16,13 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-const dotRow = "............."
+const (
+	testSize = 13
+	dotRow   = "............."
+)
 
 func dotGrid() []string {
-	rows := make([]string, GridSize)
+	rows := make([]string, testSize)
 	for i := range rows {
 		rows[i] = dotRow
 	}
@@ -37,7 +40,7 @@ func stub(t *testing.T, body string) string {
 }
 
 func filledGrid() string {
-	return strings.Repeat("ააააააააააააა\n", GridSize)
+	return strings.Repeat("ააააააააააააა\n", testSize)
 }
 
 func TestFillSuccess(t *testing.T) {
@@ -53,7 +56,7 @@ func TestFillSuccess(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(got) != GridSize || got[0] != "ააააააააააააა" {
+	if len(got) != testSize || got[0] != "ააააააააააააა" {
 		t.Errorf("unexpected grid %v", got)
 	}
 
@@ -110,12 +113,26 @@ func TestValidateGrid(t *testing.T) {
 	if err := ValidateGrid(dotGrid()); err != nil {
 		t.Errorf("valid grid: %v", err)
 	}
+	dots := func(size int) []string {
+		rows := make([]string, size)
+		for i := range rows {
+			rows[i] = strings.Repeat(".", size)
+		}
+		return rows
+	}
+	for _, size := range []int{11, MaxGridSize} {
+		if err := ValidateGrid(dots(size)); err != nil {
+			t.Errorf("valid %dx%d grid: %v", size, size, err)
+		}
+	}
 	bad := map[string][]string{
+		"not square":    dotGrid()[:11],
+		"tiny":          {"..", ".."},
 		"too few rows":  dotGrid()[:12],
 		"short row":     append(dotGrid()[:12], "..........."),
 		"latin letter":  append(dotGrid()[:12], "abcdefghijklm"),
 		"digit":         append(dotGrid()[:12], "1............"),
-		"too many rows": append(dotGrid(), dotRow),
+		"too many rows": dots(MaxGridSize + 1),
 	}
 	for name, rows := range bad {
 		if err := ValidateGrid(rows); err == nil {

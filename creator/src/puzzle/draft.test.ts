@@ -1,10 +1,24 @@
 import { describe, expect, it } from 'vitest'
-import { SAMPLE_GRIDS } from '../grids/samples'
 import { buildPuzzle } from './build'
 import { draftFromPuzzle, type Draft } from './draft'
 import type { PuzzleV1 } from './types'
 
-const layout = SAMPLE_GRIDS[0].rows
+// Fixed on purpose, so the tests do not change when the sample grids do.
+const layout = [
+  '##....#.....#',
+  '......#......',
+  '.............',
+  '...##...##...',
+  '#...#...#....',
+  '#......#.....',
+  '.............',
+  '.....#......#',
+  '....#...#...#',
+  '...##...##...',
+  '.............',
+  '......#......',
+  '#.....#....##',
+]
 const savedAt = '2026-10-14T22:00:00.000Z'
 
 // A letter for every white cell, cycling through the alphabet.

@@ -1,21 +1,21 @@
 import { describe, expect, it } from 'vitest'
 import { blackCount, checkGrid } from './rules'
 
-// A valid 13x13 grid. Tests break one rule at a time.
+// A valid 13x13 grid with 36 black cells. Tests break one rule at a time.
 const valid13 = [
-  '#...#...#...#',
-  '........#....',
-  '.............',
-  '.......#.....',
-  '##....##.....',
-  '#...#....#...',
-  '...##...##...',
-  '...#....#...#',
-  '.....##....##',
-  '.....#.......',
-  '.............',
-  '....#........',
-  '#...#...#...#',
+  '#...###......',
+  '#.....#......',
+  '......#......',
+  '...#...#....#',
+  '.....#....###',
+  '....##...#...',
+  '....#...#....',
+  '...#...##....',
+  '###....#.....',
+  '#....#...#...',
+  '......#......',
+  '......#.....#',
+  '......###...#',
 ]
 
 const blank = (size: number) =>
@@ -90,14 +90,14 @@ describe('tiers', () => {
     const rows = Array.from({ length: 13 }, (_, r) =>
       Array.from({ length: 13 }, (_, c) => ((r + c) % 2 === 0 ? '#' : '.')).join(''),
     )
-    expect(checkGrid(rows, 'standard')).toContainEqual(expect.stringMatching(/ceiling of 34/))
+    expect(checkGrid(rows, 'open')).toContainEqual(expect.stringMatching(/ceiling of 36/))
     expect(checkGrid(rows, 'loose')).toContainEqual(expect.stringMatching(/ceiling of 46/))
   })
 
-  it('rejects a word longer than the tier maximum', () => {
-    // valid13 has 13-letter words, which are fine in standard and not in loose.
-    expect(checkGrid(valid13, 'standard')).toEqual([])
-    expect(checkGrid(valid13, 'loose')).toContainEqual(expect.stringMatching(/longer than 9/i))
+  it('rejects a word longer than 9 cells in every tier', () => {
+    for (const tier of ['loose', 'open'] as const) {
+      expect(checkGrid(blank(13), tier)).toContainEqual(expect.stringMatching(/longer than 9/i))
+    }
   })
 })
 

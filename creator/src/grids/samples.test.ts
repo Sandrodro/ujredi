@@ -3,14 +3,21 @@ import { TIERS, blackCount, checkGrid } from './rules'
 import { SAMPLE_GRIDS } from './samples'
 
 describe('SAMPLE_GRIDS', () => {
-  it('has 3 grids for each tier', () => {
-    for (const tier of ['standard', 'loose'] as const) {
-      expect(SAMPLE_GRIDS.filter((grid) => grid.tier === tier)).toHaveLength(3)
+  it('has 1 grid in each of loose, open, loose-14 and open-14, and 2 in each long tier', () => {
+    const count = (tier: string) => SAMPLE_GRIDS.filter((grid) => grid.tier === tier).length
+    expect(
+      [count('loose'), count('open'), count('loose-14'), count('open-14'), count('loose-long'), count('open-long')],
+    ).toEqual([1, 1, 1, 1, 2, 2])
+  })
+
+  it('has the black count of its name', () => {
+    for (const grid of SAMPLE_GRIDS.filter(({ tier }) => tier === 'loose' || tier === 'open')) {
+      expect(blackCount(grid.rows)).toBe(grid.tier === 'loose' ? 36 : 34)
     }
   })
 
-  it('has 13x13 grids only', () => {
-    expect(SAMPLE_GRIDS.every((grid) => grid.rows.length === 13)).toBe(true)
+  it('has the size of its tier', () => {
+    expect(SAMPLE_GRIDS.every((grid) => grid.rows.length === TIERS[grid.tier].size)).toBe(true)
   })
 
   it.each(SAMPLE_GRIDS)('$id follows the rules of its tier', ({ rows, tier }) => {

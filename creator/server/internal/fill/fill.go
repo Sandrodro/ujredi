@@ -17,7 +17,11 @@ import (
 	"ujredi/creator/server/internal/words"
 )
 
-const GridSize = 13
+// Grids are square, from MinGridSize to MaxGridSize cells per side.
+const (
+	MinGridSize = 3
+	MaxGridSize = 14
+)
 
 var ErrUnfillable = errors.New("grid is unfillable")
 
@@ -47,14 +51,15 @@ func FindBinary(configured string) (string, error) {
 	return exec.LookPath(filepath.Join(home, ".cargo", "bin", "ingrid_core"))
 }
 
-// ValidateGrid checks that rows is a 13x13 grid of `#`, `.` and Georgian letters.
+// ValidateGrid checks that rows is a square grid of `#`, `.` and Georgian letters.
 func ValidateGrid(rows []string) error {
-	if len(rows) != GridSize {
-		return fmt.Errorf("grid must have %d rows", GridSize)
+	size := len(rows)
+	if size < MinGridSize || size > MaxGridSize {
+		return fmt.Errorf("grid must have %d to %d rows", MinGridSize, MaxGridSize)
 	}
 	for i, row := range rows {
-		if utf8.RuneCountInString(row) != GridSize {
-			return fmt.Errorf("row %d must have %d cells", i, GridSize)
+		if utf8.RuneCountInString(row) != size {
+			return fmt.Errorf("row %d must have %d cells", i, size)
 		}
 		for _, r := range row {
 			if r != '#' && r != '.' && !words.IsGeorgianLetter(r) {
