@@ -1,2 +1,4 @@
 .DS_Store
 server/tmp/
+creator/server/data/raw/
+creator/server/server
